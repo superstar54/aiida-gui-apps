@@ -40,3 +40,8 @@ aiida_gui_apps = ["static/*", "static/**/*"]
 [build-system]
 requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
+
+pre-commit = [
+    "pre-commit~=2.2",
+    "pylint~=2.17.4",
+]

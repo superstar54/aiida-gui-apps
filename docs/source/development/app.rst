@@ -31,7 +31,7 @@ In your Python package (e.g. ``aiida_qe_app``):
 .. code-block:: python
 
   # aiida_qe_app/__init__.py
-  
+
   from .backend.app.api import app
 
   __version__ = "0.1.0"
@@ -81,5 +81,3 @@ After ``PUBLIC_URL=/plugins/apps/qeapp npm run build``, you’ll get:
        cd frontend
        npm install
        npm run build
-
-

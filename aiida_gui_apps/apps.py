@@ -2,7 +2,8 @@ from __future__ import annotations
 import sys
 import traceback
 import pathlib
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
+
 
 def get_plugins():
     import importlib.metadata
@@ -31,6 +32,7 @@ def get_plugins():
 
     return plugins
 
+
 plugins = get_plugins()
 
 # static_dir points to plugin1/static
@@ -39,18 +41,23 @@ static_dir = str(THIS_DIR / "static")
 
 router = APIRouter()
 
+
 @router.get("/apps")
 async def get_apps():
     """Return the daemon status."""
     data = []
     for key, pluin in plugins.items():
-        data.append({
+        data.append(
+            {
                 "name": key,
                 "title": plugin.get("title", key),
                 "version": plugin.get("version", "unknown"),
                 "description": plugin.get("description", "No description provided"),
-                "logo": plugin.get("logo", None),})
+                "logo": plugin.get("logo", None),
+            }
+        )
     return data
+
 
 routers = {"apps": router}  # Default router for the main app
 sub_apps = {}
