@@ -42,8 +42,11 @@ pre-commit = [
 apps = "aiida_gui_apps:plugin"
 
 [tool.setuptools]
-packages = ["aiida_gui_apps"] # find_packages() equivalent
 include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["aiida_gui_apps", "aiida_gui_apps.*"]
 
 [tool.setuptools.package-data] # Corrected from [tool.uptools.package-data]
 aiida_gui_apps = ["static/*", "static/**/*"]
