@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "aiida_gui_apps"
 # This 'version' is now dynamic, read from your __init__.py
@@ -6,7 +10,7 @@ description = "Design flexible node-based workflow for AiiDA calculation."
 authors = [{name = "Xing Wang", email = "xingwang1991@gmail.com"}]
 readme = "README.md"
 dependencies = [
-    "fastapi>=0.95.0",
+    "aiida-gui",
 ]
 license = {file = "LICENSE"}
 classifiers = [
@@ -27,6 +31,13 @@ classifiers = [
 Documentation = "https://aiida-gui-apps.readthedocs.io"
 Source = "https://github.com/aiidateam/aiida-gui-apps"
 
+[project.optional-dependencies]
+pre-commit = [
+    "pre-commit~=2.2",
+    "pylint~=2.17.4",
+]
+
+
 [project.entry-points."aiida_gui.plugins"]
 apps = "aiida_gui_apps:plugin"
 
@@ -37,11 +48,5 @@ include-package-data = true
 [tool.setuptools.package-data] # Corrected from [tool.uptools.package-data]
 aiida_gui_apps = ["static/*", "static/**/*"]
 
-[build-system]
-requires = ["setuptools>=61.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
-pre-commit = [
-    "pre-commit~=2.2",
-    "pylint~=2.17.4",
-]
+[tool.setuptools.dynamic]
+version = { attr = "aiida_gui_apps.__version__" }
