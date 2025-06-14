@@ -1,23 +1,25 @@
-
 const esbuild = require("esbuild");
-const path    = require("path");
+const path = require("path");
 
-const entry   = path.resolve(__dirname, "src/index.js");
+const mode = process.argv[2] || "build";
+
+const entry = path.resolve(__dirname, "src/index.js");
 const outfile = path.resolve(__dirname, "../aiida_gui_apps/static/apps.esm.js");
 
-esbuild.build({
-  entryPoints:   [entry],
-  bundle:        true,
-  format:        "esm",
-  platform:      "browser",
+const commonOptions = {
+  logLevel: "info",
+  entryPoints: [entry],
+  bundle: true,
+  format: "esm",
+  platform: "browser",
   outfile,
-  sourcemap:     false,
+  sourcemap: false,
   loader: {
-    ".js":  "jsx",
+    ".js": "jsx",
     ".jsx": "jsx",
   },
-  jsxFactory:   "React.createElement",
-  jsxFragment:  "React.Fragment",
+  jsxFactory: "React.createElement",
+  jsxFragment: "React.Fragment",
   external: [
     "react",
     "react-dom",
@@ -27,26 +29,34 @@ esbuild.build({
     "use-sync-external-store",
     "use-sync-external-store/shim",
   ],
-
-  // <<< Add this banner to shim `require` calls >>>
   banner: {
     js: `
-      // Shim Node.js-style require for our externals in the browser:
       var require = function(name) {
-        if (name === 'react')                 return window.React;
-        if (name === 'react-dom')             return window.ReactDOM;
-        if (name === 'react-dom/client')      return window.ReactDOM;
-        if (name === 'react/jsx-runtime')     return window.React;         // jsx-runtime is also React
-        if (name === 'use-sync-external-store'
-            || name === 'use-sync-external-store/shim')
-                                              return { useSyncExternalStore: window.React.useSyncExternalStore };
-        // add more cases here if you externalize other CJS libs…
-        throw new Error('Cannot require \"' + name + '\"');
+        if (name === 'react') return window.React;
+        if (name === 'react-dom') return window.ReactDOM;
+        if (name === 'react-dom/client') return window.ReactDOM;
+        if (name === 'react/jsx-runtime') return window.React;
+        if (name === 'use-sync-external-store' || name === 'use-sync-external-store/shim')
+          return { useSyncExternalStore: window.React.useSyncExternalStore };
+        throw new Error('Cannot require "' + name + '"');
       };
-    `
+    `,
   },
-})
-.catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+};
+
+if (mode === "watch") {
+  esbuild.context(commonOptions)
+    .then(ctx => ctx.watch())
+    .then(() => console.log("[esbuild] Watching for changes..."))
+    .catch(err => {
+      console.error("[esbuild] Watch error:", err);
+      process.exit(1);
+    });
+} else {
+  esbuild.build(commonOptions)
+    .then(() => console.log("[esbuild] Build complete."))
+    .catch(err => {
+      console.error("[esbuild] Build failed:", err);
+      process.exit(1);
+    });
+}
